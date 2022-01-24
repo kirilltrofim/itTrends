@@ -7,16 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using itTrend.Data;
 using itTrend.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using System.Net;
+using System.Net.Http;
+using System.Web;
 
 namespace itTrend.Controllers
 {
     public class EducatorsController : Controller
     {
+        IWebHostEnvironment _appEnvironment;
         private readonly Context _context;
 
-        public EducatorsController(Context context)
+        public EducatorsController(Context context, IWebHostEnvironment appEnvironment)
         {
             _context = context;
+            _appEnvironment = appEnvironment;
         }
 
         // GET: Educators
@@ -57,11 +65,22 @@ namespace itTrend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LastName,FirstName,Patronomic,Photo,PhoneNumber,SubjectId")] Educator educator)
+        public async Task<IActionResult> Create([Bind("Id,LastName,FirstName,Patronomic,Photo,PhoneNumber,SubjectId")] Educator educator, IFormFile uploadedFile)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(educator);
+                if (uploadedFile != null)
+                {
+                    // путь к папке Files
+                    string path = "/Files/" + uploadedFile.FileName;
+                    // сохраняем файл в папку Files в каталоге wwwroot
+                    using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                    {
+                        uploadedFile.CopyTo(fileStream);
+                    }
+                    educator.Photo = path;
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -91,7 +110,7 @@ namespace itTrend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LastName,FirstName,Patronomic,Photo,PhoneNumber,SubjectId")] Educator educator)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,LastName,FirstName,Patronomic,Photo,PhoneNumber,SubjectId")] Educator educator, IFormFile uploadedFile)
         {
             if (id != educator.Id)
             {
@@ -102,6 +121,17 @@ namespace itTrend.Controllers
             {
                 try
                 {
+                    if (uploadedFile != null)
+                    {
+                        // путь к папке Files
+                        string path = "/Files/" + uploadedFile.FileName;
+                        // сохраняем файл в папку Files в каталоге wwwroot
+                        using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                        {
+                            uploadedFile.CopyTo(fileStream);
+                        }
+                        educator.Photo = path;
+                    }
                     _context.Update(educator);
                     await _context.SaveChangesAsync();
                 }
