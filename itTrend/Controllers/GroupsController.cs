@@ -49,8 +49,8 @@ namespace itTrend.Controllers
         // GET: Groups/Create
         public IActionResult Create()
         {
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
-            ViewData["EducatorId"] = new SelectList(_context.Educators, "Id", "Id");
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Number");
+            ViewData["EducatorId"] = new SelectList(_context.Educators, "Id", "LastName");
             return View();
         }
 
@@ -67,8 +67,8 @@ namespace itTrend.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @group.CourseId);
-            ViewData["EducatorId"] = new SelectList(_context.Educators, "Id", "Id", @group.EducatorId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Number", @group.CourseId);
+            ViewData["EducatorId"] = new SelectList(_context.Educators, "Id", "LastName", @group.EducatorId);
             return View(@group);
         }
 
@@ -85,8 +85,8 @@ namespace itTrend.Controllers
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @group.CourseId);
-            ViewData["EducatorId"] = new SelectList(_context.Educators, "Id", "Id", @group.EducatorId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Number", @group.CourseId);
+            ViewData["EducatorId"] = new SelectList(_context.Educators, "Id", "LastName", @group.EducatorId);
             return View(@group);
         }
 
@@ -122,8 +122,8 @@ namespace itTrend.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", @group.CourseId);
-            ViewData["EducatorId"] = new SelectList(_context.Educators, "Id", "Id", @group.EducatorId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Number", @group.CourseId);
+            ViewData["EducatorId"] = new SelectList(_context.Educators, "Id", "LastName", @group.EducatorId);
             return View(@group);
         }
 

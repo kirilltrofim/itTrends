@@ -56,7 +56,7 @@ namespace itTrend.Controllers
         // GET: Educators/Create
         public IActionResult Create()
         {
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Id");
+            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name");
             return View();
         }
 
@@ -84,7 +84,7 @@ namespace itTrend.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Id", educator.SubjectId);
+            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", educator.SubjectId);
             return View(educator);
         }
 
@@ -101,7 +101,7 @@ namespace itTrend.Controllers
             {
                 return NotFound();
             }
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Id", educator.SubjectId);
+            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", educator.SubjectId);
             return View(educator);
         }
 
@@ -148,7 +148,7 @@ namespace itTrend.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Id", educator.SubjectId);
+            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", educator.SubjectId);
             return View(educator);
         }
 
