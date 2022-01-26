@@ -15,6 +15,7 @@ namespace itTrend.Models
         public string FirstName { get; set; }
         public string Patronomic { get; set; }
         public string Photo { get; set; }
+        [MinLength(9), StringLength(9), RegularExpression(@"[0][7][7]\d*")]
         public string PhoneNumber { get; set; }
         public int SubjectId { get; set; }
         public Subject Subjects { get; set; }

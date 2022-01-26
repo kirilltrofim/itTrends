@@ -10,25 +10,42 @@ using itTrend.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using itTrend.Service.Students;
 
 namespace itTrend.Controllers
 {
     public class StudentsController : Controller
     {
-        IWebHostEnvironment _appEnvironment;
-        private readonly Context _context;
+        private IStudentService _studentService;
 
-        public StudentsController(Context context, IWebHostEnvironment appEnvironment)
+        public StudentsController(IStudentService studentService)
         {
-            _context = context;
-            _appEnvironment = appEnvironment;
+            _studentService = studentService;
         }
 
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Students.ToListAsync());
+            var list = _studentService.List();
+
+            var listViewModel = new List<StudentViewModel>();
+
+            foreach (var item in list)
+            {
+                var student = new StudentViewModel()
+                {
+                    Id = item.Id,
+                    LastName = item.LastName,
+                    FirstName = item.FirstName,
+                    Patronomic = item.Patronomic,
+                    PhoneNumber = item.PhoneNumber,
+                    Photo = item.Photo
+                };
+                listViewModel.Add(student);
+            }
+            return View(await Task.Run(() => listViewModel));
         }
+
 
         // GET: Students/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -38,14 +55,24 @@ namespace itTrend.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var student = _studentService.GetById((int)id);
+
             if (student == null)
             {
                 return NotFound();
             }
 
-            return View(student);
+            var studentViewModel = new StudentViewModel()
+            {
+                Id = student.Id,
+                LastName = student.LastName,
+                FirstName = student.FirstName,
+                Patronomic = student.Patronomic,
+                PhoneNumber = student.PhoneNumber,
+                Photo = student.Photo
+            };
+
+            return View(await Task.Run(() => studentViewModel));
         }
 
         // GET: Students/Create
@@ -59,29 +86,27 @@ namespace itTrend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LastName,FirstName,Patronomic,PhoneNumber,Photo")] Student student, IFormFile uploadedFile)
+        public async Task<IActionResult> Create(StudentViewModel studentViewModel, IFormFile uploadFile)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(student);
-                if (uploadedFile != null)
+                var student = new Student()
                 {
-                    // путь к папке Files
-                    string path = "/Files/" + uploadedFile.FileName;
-                    // сохраняем файл в папку Files в каталоге wwwroot
-                    using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                    {
-                        uploadedFile.CopyTo(fileStream);
-                    }
-                    student.Photo = path;
-                }
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    Id = studentViewModel.Id,
+                    LastName = studentViewModel.LastName,
+                    FirstName = studentViewModel.FirstName,
+                    Patronomic = studentViewModel.Patronomic,
+                    PhoneNumber = studentViewModel.PhoneNumber,
+                    Photo = studentViewModel.Photo
+                };
+
+                _studentService.Create(student, uploadFile);
+                return RedirectToAction(await Task.Run(() => nameof(Index)));
             }
-            return View(student);
+            return View(await Task.Run(() => studentViewModel));
         }
 
-        // GET: Students/Edit/5
+        // GET: Studnets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -89,12 +114,24 @@ namespace itTrend.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students.FindAsync(id);
+            var student = _studentService.GetById((int)id);
             if (student == null)
             {
                 return NotFound();
             }
-            return View(student);
+
+            var studentViewModel = new StudentViewModel()
+            {
+                Id = student.Id,
+                LastName = student.LastName,
+                FirstName = student.FirstName,
+                Patronomic = student.Patronomic,
+                PhoneNumber = student.PhoneNumber,
+                Photo = student.Photo
+            };
+
+            return View(await Task.Run(() => studentViewModel));
+
         }
 
         // POST: Students/Edit/5
@@ -102,9 +139,9 @@ namespace itTrend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LastName,FirstName,Patronomic,PhoneNumber,Photo")] Student student, IFormFile uploadedFile)
+        public async Task<IActionResult> Edit(int id, StudentViewModel studentViewModel, IFormFile uploadFile)
         {
-            if (id != student.Id)
+            if (id != studentViewModel.Id)
             {
                 return NotFound();
             }
@@ -113,23 +150,11 @@ namespace itTrend.Controllers
             {
                 try
                 {
-                    if (uploadedFile != null)
-                    {
-                        // путь к папке Files
-                        string path = "/Files/" + uploadedFile.FileName;
-                        // сохраняем файл в папку Files в каталоге wwwroot
-                        using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                        {
-                            uploadedFile.CopyTo(fileStream);
-                        }
-                        student.Photo = path;
-                    }
-                    _context.Update(student);
-                    await _context.SaveChangesAsync();
+                    _studentService.Update(id, studentViewModel, uploadFile);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!StudentExists(student.Id))
+                    if (!StudentExists(studentViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -138,9 +163,10 @@ namespace itTrend.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(await Task.Run(() => nameof(Index)));
             }
-            return View(student);
+
+            return View(await Task.Run(() => studentViewModel));
         }
 
         // GET: Students/Delete/5
@@ -151,14 +177,26 @@ namespace itTrend.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var student = _studentService.GetById((int)id);
+
             if (student == null)
             {
                 return NotFound();
             }
 
-            return View(student);
+            var studentViewModel = new StudentViewModel()
+            {
+                Id = student.Id,
+                LastName = student.LastName,
+                FirstName = student.FirstName,
+                Patronomic = student.Patronomic,
+                PhoneNumber = student.PhoneNumber,
+                Photo = student.Photo
+            };
+
+            return View(await Task.Run(() => studentViewModel));
+
+            //return View(await Task.Run(() => novost));
         }
 
         // POST: Students/Delete/5
@@ -166,15 +204,13 @@ namespace itTrend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _context.Students.FindAsync(id);
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            _studentService.Delete(id);
+            return RedirectToAction(await Task.Run(() => nameof(Index)));
         }
 
         private bool StudentExists(int id)
         {
-            return _context.Students.Any(e => e.Id == id);
+            return _studentService.StudentExists(id);
         }
     }
 }

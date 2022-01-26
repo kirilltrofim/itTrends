@@ -28,6 +28,8 @@ namespace itTrend
             services.AddDbContext<Context>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.RegisterServiceDependencies();
+
             services.AddControllersWithViews();
 
         }
