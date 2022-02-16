@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dGMa++yc7D71cqnk2CJEov9NqWOrLklbVuTFgZdbDA+JGkpmdD1GZ0hVIrV3axoDpyvDGEZC/pROBRM9EZVgZQ==",
+  "dgSpecHash": "wFw7LS50EfNPo+VscmEN2HLjTUaLG9HISiafRo3zVvBgDJ7tyW08CBgoUHwPHZbA6lu+NsB2ZXxxRSsQHVEg3w==",
   "success": true,
-  "projectFilePath": "D:\\Work\\itTrends\\itTrend\\itTrend.csproj",
+  "projectFilePath": "D:\\iT\\GitHub\\C# Site\\itTrend2\\itTrend\\itTrend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kirilltrofim\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\kirilltrofim\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",

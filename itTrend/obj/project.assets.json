@@ -7157,11 +7157,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Work\\itTrends\\itTrend\\itTrend.csproj",
+      "projectUniqueName": "D:\\iT\\GitHub\\C# Site\\itTrend2\\itTrend\\itTrend.csproj",
       "projectName": "itTrend",
-      "projectPath": "D:\\Work\\itTrends\\itTrend\\itTrend.csproj",
+      "projectPath": "D:\\iT\\GitHub\\C# Site\\itTrend2\\itTrend\\itTrend.csproj",
       "packagesPath": "C:\\Users\\kirilltrofim\\.nuget\\packages\\",
-      "outputPath": "D:\\Work\\itTrends\\itTrend\\obj\\",
+      "outputPath": "D:\\iT\\GitHub\\C# Site\\itTrend2\\itTrend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\kirilltrofim\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -7241,7 +7241,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.404\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }

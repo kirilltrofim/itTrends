@@ -65,19 +65,19 @@ namespace itTrend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LastName,FirstName,Patronomic,Photo,PhoneNumber,SubjectId")] Educator educator, IFormFile uploadedFile)
+        public async Task<IActionResult> Create([Bind("Id,LastName,FirstName,Patronomic,Photo,PhoneNumber,SubjectId")] Educator educator, IFormFile uploadFile)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(educator);
-                if (uploadedFile != null)
+                if (uploadFile != null)
                 {
                     // путь к папке Files
-                    string path = "/Files/" + uploadedFile.FileName;
+                    string path = "/Files/" + uploadFile.FileName;
                     // сохраняем файл в папку Files в каталоге wwwroot
                     using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                     {
-                        uploadedFile.CopyTo(fileStream);
+                        uploadFile.CopyTo(fileStream);
                     }
                     educator.Photo = path;
                 }
@@ -110,7 +110,7 @@ namespace itTrend.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LastName,FirstName,Patronomic,Photo,PhoneNumber,SubjectId")] Educator educator, IFormFile uploadedFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,LastName,FirstName,Patronomic,Photo,PhoneNumber,SubjectId")] Educator educator, IFormFile uploadFile)
         {
             if (id != educator.Id)
             {
@@ -121,14 +121,14 @@ namespace itTrend.Controllers
             {
                 try
                 {
-                    if (uploadedFile != null)
+                    if (uploadFile != null)
                     {
                         // путь к папке Files
-                        string path = "/Files/" + uploadedFile.FileName;
+                        string path = "/Files/" + uploadFile.FileName;
                         // сохраняем файл в папку Files в каталоге wwwroot
                         using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                         {
-                            uploadedFile.CopyTo(fileStream);
+                            uploadFile.CopyTo(fileStream);
                         }
                         educator.Photo = path;
                     }
@@ -188,3 +188,4 @@ namespace itTrend.Controllers
         }
     }
 }
+
